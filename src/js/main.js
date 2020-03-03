@@ -5,14 +5,14 @@ let startBtn = document.querySelector('#start');
 // Получить все блоки в правой части программы через классы (которые имеют класс название-value, начиная с <div class="budget-value"></div> и заканчивая <div class="yearsavings-value"></div>)
 
 let resultTable = document.querySelector('.result-table'),
-    budgetValue = resultTable.querySelector('.budget-value'),
-    daybudgetValue = resultTable.querySelector('.daybudget-value'),
-    levelValue = resultTable.querySelector('.level-value'),
-    expensesValue = resultTable.querySelector('.expenses-value'),
-    optionalexpensesValue = resultTable.querySelector('.optionalexpenses-value'),
-    incomeValue = resultTable.querySelector('.income-value'),
-    monthsavingsValue = resultTable.querySelector('.monthsavings-value'),
-    yearsavingsValue = resultTable.querySelector('.yearsavings-value');
+    budgetValue = document.querySelector('.budget-value'),
+    daybudgetValue = document.querySelector('.daybudget-value'),
+    levelValue = document.querySelector('.level-value'),
+    expensesValue = document.querySelector('.expenses-value'),
+    optionalexpensesValue = document.querySelector('.optionalexpenses-value'),
+    incomeValue = document.querySelector('.income-value'),
+    monthsavingsValue = document.querySelector('.monthsavings-value'),
+    yearsavingsValue = document.querySelector('.yearsavings-value');
 
 // Получить поля(input) c обязательными расходами через класс. (class=”expenses-item”)
 let expensesItem = document.querySelectorAll('.expenses-item');
@@ -23,7 +23,6 @@ let expensesItemBtn = expensesBtn[0];
 let optionalexpensesBtn = expensesBtn[1];
 let countBudgetBtn = expensesBtn[2];
 
-console.log(optionalexpensesBtn);
 
 // Получить поля для ввода необязательных расходов (optionalexpenses-item) при помощи querySelectorAll
 let optionalexpensesItem = document.querySelectorAll('.optionalexpenses-item');
@@ -40,18 +39,45 @@ let income = document.querySelector('#income'),
     
     let money, time;
 
-    function start() {
-      money = +prompt("Ваш бюджет на месяц?", '');
+    startBtn.addEventListener('click', function () {
       time = prompt('Введите дату в формате YYYY-MM-DD', '');
-    
+      money = +prompt("Ваш бюджет на месяц?", '');
+        
       while(isNaN(money) || money == "" || money == null) {
         money = +prompt("Ваш бюджет на месяц?", '');
       }
-    }
+      appData.budget = money;
+      budgetValue.textContent = money.toFixed();
+      appData.timeData = time;
+      year.value = new Date(Date.parse(time)).getFullYear();
+      month.value = new Date(Date.parse(time)).getMonth()+1;
+      day.value = new Date(Date.parse(time)).getDate();
+    });
+
+    expensesItemBtn.addEventListener('click', function() {
+      let sum = 0;
+      for (let i=0; i < expensesItem.length; i++) {
+        let a = expensesItem[i].value,
+            b = expensesItem[++i].value;
+            
+        if( (typeof(a)) === 'string' && (typeof(a)) != null && (typeof(b)) != null && a != '' && a.length <50) {
+          console.log("done");
+          appData.expenses[a] = b;
+          sum += +b;
+          
+        } else {
+          i= i-1;
+        }
+      }
+      expensesValue.textContent = sum;
+    });
+
+    optionalexpensesBtn.addEventListener('click', function() {
+      
+    });
+
     
-    start();
-    
-    
+      
     let appData = {
       budget: money,
       expenses: {},
@@ -60,17 +86,7 @@ let income = document.querySelector('#income'),
       timeData: time,
       savings: true,
       chooseExpenses: function() {
-        for (let i=0; i<2; i++) {
-          let a = prompt("Введите обязательную статью расходов в этом месяце", ''),
-              b = prompt("Во сколько обойдется?", "");
-              
-          if( (typeof(a)) === 'string' && (typeof(a)) != null && (typeof(b)) != null && a != '' && a.length <50) {
-            console.log("done");
-            appData.expenses[a] = b;
-          } else {
-            i= i-1;
-          }
-        }
+
       },
       detectDayBudget: function() {
         appData.moneyPerDay = (appData.budget / 30).toFixed();
