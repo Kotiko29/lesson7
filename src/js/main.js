@@ -30,7 +30,7 @@ let optionalexpensesItem = document.querySelectorAll('.optionalexpenses-item');
 // Получить оставшиеся поля через querySelector (статьи возможного дохода, чекбокс, сумма, процент, год, месяц, день)
 
 let income = document.querySelector('#income'),
-    checksavings = document.querySelector('#savings'),
+    checkSavings = document.querySelector('#savings'),
     chooseSum = document.querySelector('#sum'),
     choosePercent = document.querySelector('#percent'),
     year = document.querySelector('.year-value'),
@@ -73,9 +73,77 @@ let income = document.querySelector('#income'),
     });
 
     optionalexpensesBtn.addEventListener('click', function() {
-      
+      for(let i = 0; i < optionalexpensesItem.length; i++) {
+        let optionalCost = optionalexpensesItem[i].value;
+        appData.optionalExpenses[i] = optionalCost;
+        optionalexpensesValue.textContent += appData.optionalExpenses[i] + ' ';
+      }
     });
 
+    countBudgetBtn.addEventListener('click', function() {
+      if(appData.budget != undefined) {
+        appData.moneyPerDay = (appData.budget / 30).toFixed();
+        // alert("Ежедневный бюджет: " + appData.moneyPerDay);
+        daybudgetValue.textContent = appData.moneyPerDay;
+
+        if(appData.moneyPerDay < 100) {
+          console.log("Минимальный уровень достатка");
+          levelValue.textContent = "Минимальный уровень достатка";
+        } else if (appData.moneyPerDay > 100 && appData.moneyPerDay < 2000) {
+          console.log("Средний уровень достатка");
+          levelValue.textContent = "Средний уровень достатка";
+        } else if (appData.moneyPerDay > 2000) {
+          console.log("Высокий уровень достатка");
+          levelValue.textContent = "Высокий уровень достатка";
+        } else {
+          console.log("Произошла ошибка");
+          levelValue.textContent = "Произошла ошибка";
+        }
+      } else {
+          daybudgetValue.textContent =  "Произошла ошибка";
+      }
+    });
+
+    income.addEventListener('input', function() {
+      let items = income.value;
+      appData.income = items.split(', ');
+      incomeValue.textContent = appData.income;
+    });
+
+    checkSavings.addEventListener('click', function() {
+      if(appData.savings == true){
+        appData.savings = false;
+      } else {
+        appData.savings = true;
+      }
+    });
+
+    chooseSum.addEventListener('input', function() {
+      if(appData.savings == true) {
+        let sum = +chooseSum.value,
+            persent = +choosePercent.value;
+        
+        appData.monthIncome = sum/100/12*persent;
+        appData.yearIncome = sum/100*percent;
+
+        monthsavingsValue.textContent = appData.monthIncome.toFixed(1);
+        yearsavingsValue.textContent = appData.yearIncome.toFixed(1);
+      }
+    });
+
+    
+    choosePercent.addEventListener('input', function() {
+      if(appData.savings == true) {
+        let sum = +chooseSum.value,
+            percent = +choosePercent.value;
+        
+        appData.monthIncome = sum/100/12*percent;
+        appData.yearIncome = sum/100*percent;
+
+        monthsavingsValue.textContent = appData.monthIncome.toFixed(1);
+        yearsavingsValue.textContent = appData.yearIncome.toFixed(1);
+      }
+    });
     
       
     let appData = {
@@ -84,25 +152,25 @@ let income = document.querySelector('#income'),
       optionalExpenses: {},
       income: [],
       timeData: time,
-      savings: true,
-      chooseExpenses: function() {
+      savings: false,
+      // chooseExpenses: function() {
 
-      },
-      detectDayBudget: function() {
-        appData.moneyPerDay = (appData.budget / 30).toFixed();
-        alert("Ежедневный бюджет: " + appData.moneyPerDay);
-      },
-      detectLevel: function() {
-        if(appData.moneyPerDay < 100) {
-          console.log("Минимальный уровень достатка");
-        } else if (appData.moneyPerDay > 100 && appData.moneyPerDay < 2000) {
-          console.log("Средний уровень достатка");
-        } else if (appData.moneyPerDay > 2000) {
-          console.log("Высокий уровень достатка");
-        } else {
-          console.log("Произошла ошибка");
-        }
-      },
+      // },
+      // detectDayBudget: function() {
+      //   appData.moneyPerDay = (appData.budget / 30).toFixed();
+      //   alert("Ежедневный бюджет: " + appData.moneyPerDay);
+      // },
+      // detectLevel: function() {
+      //   if(appData.moneyPerDay < 100) {
+      //     console.log("Минимальный уровень достатка");
+      //   } else if (appData.moneyPerDay > 100 && appData.moneyPerDay < 2000) {
+      //     console.log("Средний уровень достатка");
+      //   } else if (appData.moneyPerDay > 2000) {
+      //     console.log("Высокий уровень достатка");
+      //   } else {
+      //     console.log("Произошла ошибка");
+      //   }
+      // },
       checkSavings: function() {
         if(appData.savings == true) {
           let save = +prompt("Какова сумма накоплений?"),
@@ -112,12 +180,9 @@ let income = document.querySelector('#income'),
           alert("Доход в месяц с вашего депозита: " + appData.monthIncome);
         }
       },
-      chooseOptExpenses: function() {
-        for(let i = 0; i < 3; i++) {
-          let optionalCost = prompt('Статья необязательных расходов?');
-          appData.optionalExpenses[i] = optionalCost;
-        }
-      },
+      // chooseOptExpenses: function() {// статья необязательных расходов
+        
+      // },
       chooseIncome: function() {
         for(let i = 0; i < 1; i++) {
           let items = prompt('Что принесет дополнительный доход?(Перечислите через запятую)');
